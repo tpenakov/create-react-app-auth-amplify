@@ -2,6 +2,6 @@
 
 exports.handler = async (event) => {
     // TODO implement
-    const response = "recfunction 001";
+    const response = "recfunction 002";
     return response;
 };
