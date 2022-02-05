@@ -4,22 +4,25 @@ import './App.css';
 import { withAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react'
 import { Amplify, API, graphqlOperation } from 'aws-amplify';
 import aws_exports from './aws-exports';
-import { createTodo, listTodos, updateTodo, deleteTodo } from './graphql/todo'
+import { getTodo, listTodos } from './graphql/queries'
+import { createTodo, updateTodo, deleteTodo } from './graphql/mutations'
 Amplify.configure(aws_exports);
 
 class App extends Component {
-  
-  async render() {
-  
-    const result = await API.graphql(createTodo, {
+
+  render() {
+
+    API.graphql(createTodo, {
       input: {
         name: 'My first todo!'
       }
-    });
+    })
+      .then(value => console.log(value))
+      .catch(err => { console.log(err) });
 
-    console.log(result);
-    const result1 = await API.graphql(listTodos);
-    console.log(result1);
+    API.graphql(listTodos)
+      .then(value => console.log(value))
+      .catch(err => { console.log(err) });
 
     return (
       <div className="App">
