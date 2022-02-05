@@ -3,3 +3,7 @@ type Todo @model {
   name: String!
   description: String
 }
+
+type Query {
+  recfunction(msg: String): String @function(name: "recfunction-${env}")
+}

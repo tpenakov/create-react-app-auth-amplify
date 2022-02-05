@@ -14,6 +14,12 @@
     "categories": {
       "auth": {
         "cognitocf0c6096": {}
+      },
+      "function": {
+        "recfunction": {
+          "deploymentBucketName": "amplify-authcra-devg-30655-deployment",
+          "s3Key": "amplify-builds/recfunction-4b38714e4669665a3943-build.zip"
+        }
       }
     }
   }

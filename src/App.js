@@ -4,7 +4,7 @@ import './App.css';
 import { withAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react'
 import { Amplify, API, graphqlOperation } from 'aws-amplify';
 import aws_exports from './aws-exports';
-import { getTodo, listTodos } from './graphql/queries'
+import { getTodo, listTodos, recfunction } from './graphql/queries'
 import { createTodo, updateTodo, deleteTodo } from './graphql/mutations'
 Amplify.configure(aws_exports);
 
@@ -43,10 +43,15 @@ class App extends Component {
 
       console.log(createdTodo)
     }
-    if (true) {
+    if (false) {
       const todoList = await API.graphql(graphqlOperation(listTodos));
 
       console.log(todoList)
+    }
+    if (true) {
+      const recfunctionString = await API.graphql(graphqlOperation(recfunction));
+
+      console.log(recfunctionString)
     }
   }
 }
