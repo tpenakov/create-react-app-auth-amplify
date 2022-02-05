@@ -12,18 +12,6 @@ class App extends Component {
 
   render() {
 
-    API.graphql(createTodo, {
-      input: {
-        name: 'My first todo!'
-      }
-    })
-      .then(value => console.log(value))
-      .catch(err => { console.log(err) });
-
-    API.graphql(listTodos)
-      .then(value => console.log(value))
-      .catch(err => { console.log(err) });
-
     return (
       <div className="App">
         <AmplifySignOut />
@@ -43,6 +31,23 @@ class App extends Component {
         </header>
       </div>
     );
+  }
+
+  async componentDidMount() {
+    if (false) {
+      const createdTodo = await API.graphql(graphqlOperation(createTodo, {
+        input: {
+          name: 'My first todo!'
+        }
+      }));
+
+      console.log(createdTodo)
+    }
+    if (true) {
+      const todoList = await API.graphql(graphqlOperation(listTodos));
+
+      console.log(todoList)
+    }
   }
 }
 
