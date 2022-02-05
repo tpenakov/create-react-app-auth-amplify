@@ -9,14 +9,14 @@ Amplify.configure(aws_exports);
 
 class App extends Component {
   
-  render() {
+  async render() {
   
     const result = await API.graphql(createTodo, {
       input: {
         name: 'My first todo!'
       }
     });
-    
+
     console.log(result);
     const result1 = await API.graphql(listTodos);
     console.log(result1);
