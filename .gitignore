@@ -27,6 +27,7 @@ yarn-error.log*
 
 /root
 /.vscode
+git.diff
 
 amplify/\#current-cloud-backend
 amplify/.config/local-*
