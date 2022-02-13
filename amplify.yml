@@ -23,7 +23,6 @@ frontend:
   phases:
     preBuild:
       commands:
-        - rm package-lock.json
         - npm ci
     build:
       commands:
