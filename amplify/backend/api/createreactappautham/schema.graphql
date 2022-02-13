@@ -5,5 +5,5 @@ type Todo @model {
 }
 
 type Query {
-  recfunction(msg: String): String @function(name: "recfunction-${env}")
+  recfunction(msg: String): String @function(name: "recfunctionQ01-${env}")
 }

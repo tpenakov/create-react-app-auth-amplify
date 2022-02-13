@@ -49,7 +49,7 @@ class App extends Component {
       console.log(todoList)
     }
     if (true) {
-      const recfunctionString = await API.graphql(graphqlOperation(recfunction));
+      const recfunctionString = await API.graphql(graphqlOperation(recfunction, {msg: "test"}));
 
       console.log(recfunctionString)
     }

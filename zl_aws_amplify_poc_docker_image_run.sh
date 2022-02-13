@@ -15,5 +15,7 @@ docker run --rm -it --network host \
 	-v $DIR:$WORK_DIR \
 	-v /tmp/$SERVICE_NAME:/tmp \
 	-w $WORK_DIR \
+	-e "PROVIDER_CONFIG=$PROVIDER_CONFIG" \
+	-e "AWS_CONFIG=$AWS_CONFIG" \
 	zerolabs/aws-amplify-poc:latest \
 	$*
