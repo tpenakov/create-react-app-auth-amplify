@@ -1,0 +1,34 @@
+version: 1
+env:
+  variables:
+    GRADLE_VERSION: 7.4
+    GRADLE_HOME: /opt/gradle
+backend:
+  phases:
+    preBuild:
+      commands:
+        - yum install -y java-11-amazon-corretto
+        - wget --no-verbose --output-document=gradle.zip "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip"
+        - unzip gradle.zip
+        - rm gradle.zip
+        - mv "gradle-${GRADLE_VERSION}" "${GRADLE_HOME}/"
+        - ln --symbolic "${GRADLE_HOME}/bin/gradle" /usr/bin/gradle
+    build:
+      commands:
+        - '# Execute Amplify CLI with the helper script'
+        - amplifyPush --simple
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci
+    build:
+      commands:
+        - npm run build
+  artifacts:
+    baseDirectory: build
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
