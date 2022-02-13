@@ -23,6 +23,7 @@ frontend:
   phases:
     preBuild:
       commands:
+        - npm i fsevents@latest -f --save-optional
         - npm ci
     build:
       commands:
