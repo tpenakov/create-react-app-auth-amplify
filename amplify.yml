@@ -13,6 +13,8 @@ backend:
         - rm gradle.zip
         - mv "gradle-${GRADLE_VERSION}" "${GRADLE_HOME}/"
         - ln --symbolic "${GRADLE_HOME}/bin/gradle" /usr/bin/gradle
+        - echo "Testing Gradle installation"
+        - gradle --version
     build:
       commands:
         - '# Execute Amplify CLI with the helper script'
