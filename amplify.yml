@@ -23,11 +23,10 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm i fsevents@latest -f --save-optional
-        - npm ci
+        - yarn install
     build:
       commands:
-        - npm run build
+        - yarn build
   artifacts:
     baseDirectory: build
     files:
