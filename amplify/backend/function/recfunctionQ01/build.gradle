@@ -21,7 +21,6 @@ dependencies {
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
     implementation 'io.quarkus:quarkus-amazon-lambda'
     implementation 'io.quarkus:quarkus-arc'
-    implementation 'io.quarkus:amazon-dynamodb'
     implementation 'org.projectlombok:lombok:1.18.22'
 	annotationProcessor 'org.projectlombok:lombok:1.18.22'
 	
