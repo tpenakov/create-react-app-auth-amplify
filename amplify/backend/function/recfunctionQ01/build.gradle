@@ -4,6 +4,9 @@ plugins {
     id 'io.quarkus' version "$quarkusPlatformVersion"
 }
 
+group 'green.zerolabs'
+version '00.00.01-SNAPSHOT'
+
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
@@ -18,6 +21,7 @@ dependencies {
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
     implementation 'io.quarkus:quarkus-amazon-lambda'
     implementation 'io.quarkus:quarkus-arc'
+    implementation 'io.quarkus:amazon-dynamodb'
     implementation 'org.projectlombok:lombok:1.18.22'
 	annotationProcessor 'org.projectlombok:lombok:1.18.22'
 	

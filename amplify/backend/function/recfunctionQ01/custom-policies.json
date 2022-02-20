@@ -1,6 +1,10 @@
 [
   {
-    "Action": [],
-    "Resource": []
+    "Action": [
+      "dynamodb:*"
+    ],
+    "Resource": [
+      "arn:aws:dynamodb:::*"
+    ]
   }
 ]
