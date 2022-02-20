@@ -27,10 +27,8 @@ frontend:
     build:
       commands:
         - yarn build
-        - echo 'will try to copy pages-manifest to build directory'
-        - cp -rf build/server/* build/.
   artifacts:
-    baseDirectory: build
+    baseDirectory: .next
     files:
       - '**/*'
   cache:
