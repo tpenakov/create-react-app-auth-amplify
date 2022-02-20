@@ -3,6 +3,7 @@ env:
   variables:
     GRADLE_VERSION: 7.4
     GRADLE_HOME: /opt/gradle
+    NODE_OPTIONS: --openssl-legacy-provider
 backend:
   phases:
     preBuild:
