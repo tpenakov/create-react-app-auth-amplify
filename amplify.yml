@@ -3,7 +3,6 @@ env:
   variables:
     GRADLE_VERSION: 7.4
     GRADLE_HOME: /opt/gradle
-    NODE_OPTIONS: --openssl-legacy-provider
 backend:
   phases:
     preBuild:
@@ -27,7 +26,7 @@ frontend:
         - yarn install
     build:
       commands:
-        - yarn build
+        - export NODE_OPTIONS=--openssl-legacy-provider; yarn build; unset NODE_OPTIONS
   artifacts:
     baseDirectory: .next
     files:
