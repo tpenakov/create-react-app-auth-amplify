@@ -27,6 +27,9 @@ frontend:
     build:
       commands:
         - yarn build
+    postBuild:
+      commands:
+        - cp -rf build/server/* build/.
   artifacts:
     baseDirectory: build
     files:
