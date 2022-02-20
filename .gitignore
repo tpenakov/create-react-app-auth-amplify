@@ -31,6 +31,8 @@ git.diff
 
 # Gradle
 .gradle/
+gradle/
+gradlew*
 build/
 
 # Eclipse

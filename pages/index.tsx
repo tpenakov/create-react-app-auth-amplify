@@ -9,14 +9,31 @@ import { getTodo, listTodos, recfunction } from '../src/graphql/queries'
 import { createTodo, updateTodo, deleteTodo } from '../src/graphql/mutations'
 import { useEffect, useState } from 'react';
 import { GraphQLResult } from '@aws-amplify/api-graphql';
+import Observable from 'zen-observable-ts';
 Amplify.configure(aws_exports);
 
-const Home: NextPage = () => {
-  const [data, setData] = useState(null)
-  const [isLoading, setLoading] = useState(false)
+interface Person {
+  recfunction: string;
+}
 
-  var prm = API.graphql(graphqlOperation(recfunction, {msg: "test"}));
-  console.log(prm);
+const initialState: Person = { recfunction: 'Empty' };
+
+const Home: NextPage = () => {
+  const [data, setData] = useState(initialState)
+
+  function callRecFunction() {
+    const prm = (API.graphql(graphqlOperation(recfunction, { msg: "test" })) as Promise<GraphQLResult>);
+    prm
+      .then((res) => {
+        //console.log(res);
+        return res.data as Person;
+      })
+      .then((res) => {
+        console.log(res);
+        setData({ recfunction: res.recfunction });
+        return res;
+      })
+  }
 
   return (
     <div className={styles.container}>
@@ -32,6 +49,11 @@ const Home: NextPage = () => {
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
 
+        <button onClick={() => callRecFunction()}>
+          Click me
+        </button>
+
+        <p className={styles.description}>{data.recfunction}</p>
         <p className={styles.description}>
           Get started by editing{' '}
           <code className={styles.code}>pages/index.tsx</code>
