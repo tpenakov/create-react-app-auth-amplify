@@ -4,10 +4,11 @@ export type AmplifyDependentResourcesAttributes = {
             "IdentityPoolId": "string",
             "IdentityPoolName": "string",
             "UserPoolId": "string",
+            "UserPoolArn": "string",
             "UserPoolName": "string",
             "AppClientIDWeb": "string",
             "AppClientID": "string",
-            "AppClientSecret": "string"
+            "CreatedSNSRole": "string"
         }
     },
     "api": {
@@ -28,6 +29,12 @@ export type AmplifyDependentResourcesAttributes = {
             "Arn": "string",
             "Region": "string",
             "LambdaExecutionRole": "string"
+        }
+    },
+    "storage": {
+        "s3amplifypoc": {
+            "BucketName": "string",
+            "Region": "string"
         }
     }
 }

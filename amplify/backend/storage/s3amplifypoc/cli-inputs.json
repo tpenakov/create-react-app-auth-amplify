@@ -1,0 +1,14 @@
+{
+  "resourceName": "s3amplifypoc",
+  "policyUUID": "ff71cbff",
+  "bucketName": "zlamplifypoc0027b2989e5e3384aec95d0349f54a34f31",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "recfunctionQ01",
+  "groupAccess": {}
+}

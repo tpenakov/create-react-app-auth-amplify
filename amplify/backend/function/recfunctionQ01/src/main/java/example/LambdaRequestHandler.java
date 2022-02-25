@@ -11,6 +11,7 @@ public class LambdaRequestHandler implements RequestHandler<Map<String, Object>,
     @Override
     public String handleRequest(Map<String, Object> input, Context context) {
         log.info("input: {}", input);
+        context.getLogger().log("input: " + input);
         return "Hello " + input;
     }
 }
