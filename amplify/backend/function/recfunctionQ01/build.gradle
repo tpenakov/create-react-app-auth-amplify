@@ -19,16 +19,19 @@ repositories {
 
 dependencies {
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+    implementation enforcedPlatform("${quarkusPlatformGroupId}:quarkus-amazon-services-bom:${quarkusPlatformVersion}")
     implementation 'io.quarkus:quarkus-amazon-lambda'
     implementation 'io.quarkus:quarkus-arc'
+    implementation 'io.quarkiverse.amazonservices:quarkus-amazon-s3'
+    implementation 'io.quarkus:quarkus-mutiny'
+    implementation 'software.amazon.awssdk:netty-nio-client'
     implementation 'org.projectlombok:lombok:1.18.22'
-	annotationProcessor 'org.projectlombok:lombok:1.18.22'
-	
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
 
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
-	testImplementation 'org.projectlombok:lombok:1.18.22'
-	testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
+    testImplementation 'org.projectlombok:lombok:1.18.22'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.22'
 
 }
 
@@ -41,14 +44,26 @@ compileTestJava {
     options.encoding = 'UTF-8'
 }
 
-jar.baseName = 'latest_build'
+test {
+    //https://stackoverflow.com/questions/21406265/how-to-give-system-property-to-my-test-via-gradle-and-d
+    //gradle :test --tests "example.LambdaRequestHandlerTest" -Daws.accessKeyId=__ACCESS_KEY__ -Daws.secretAccessKey=__SECRET__
+    systemProperty "aws.accessKeyId", System.getProperty("aws.accessKeyId")
+    systemProperty "aws.secretAccessKey", System.getProperty("aws.secretAccessKey")
+}
 
-task buildZip(type: Zip) {
-    from compileJava
-    from processResources
-    into('lib') {
-        from configurations.runtimeClasspath
-    }
+jar.archiveBaseName = 'latest_build'
+
+task unzip(type: Copy) {
+    def zipFile = file("${buildDir}/function.zip")
+    def outputDir = file("${buildDir}/unpacked/dist")
+
+    from zipTree(zipFile)
+    into outputDir
+}
+
+task buildZip(type: Zip, dependsOn: 'unzip') {
+    from "${buildDir}/unpacked/dist"
+
     archiveFileName = 'latest_build.zip'
 }
 

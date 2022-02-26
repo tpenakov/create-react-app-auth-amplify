@@ -43,7 +43,7 @@
             "Ref": "s3Key"
           }
         },
-        "Handler": "example.LambdaRequestHandler::handleRequest",
+        "Handler": "io.quarkus.amazon.lambda.runtime.QuarkusStreamHandler::handleRequest",
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
@@ -80,7 +80,8 @@
         },
         "Runtime": "java11",
         "Layers": [],
-        "Timeout": 25
+        "Timeout": 25,
+        "MemorySize": "384"
       }
     },
     "LambdaExecutionRole": {
