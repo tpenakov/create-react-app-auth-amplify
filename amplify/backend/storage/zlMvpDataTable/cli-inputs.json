@@ -1,0 +1,26 @@
+{
+  "resourceName": "zlMvpDataTable",
+  "tableName": "zlMvpDataTable",
+  "partitionKey": {
+    "fieldName": "id",
+    "fieldType": "string"
+  },
+  "sortKey": {
+    "fieldName": "sort",
+    "fieldType": "string"
+  },
+  "gsi": [
+    {
+      "name": "gsi1",
+      "partitionKey": {
+        "fieldName": "sort",
+        "fieldType": "string"
+      },
+      "sortKey": {
+        "fieldName": "gsiSort",
+        "fieldType": "string"
+      }
+    }
+  ],
+  "triggerFunctions": []
+}
