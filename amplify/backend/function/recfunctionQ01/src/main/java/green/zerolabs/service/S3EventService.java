@@ -1,6 +1,7 @@
-package example.service;
+package green.zerolabs.service;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import io.smallrye.mutiny.Uni;
 
 import java.util.Map;
 
@@ -11,5 +12,5 @@ public interface S3EventService {
 
   Boolean isSupported(final Map<String, Object> input, final Context context);
 
-  void handle(final Map<String, Object> input, final Context context);
+  Uni<Boolean> handle(final Map<String, Object> input, final Context context);
 }

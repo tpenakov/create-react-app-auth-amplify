@@ -1,6 +1,6 @@
-package example;
+package green.zerolabs;
 
-import example.model.S3EventMessage;
+import green.zerolabs.model.S3EventMessage;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -44,7 +44,7 @@ public class LambdaRequestHandlerIT {
                                     S3EventMessage.Record.S3
                                         .Object
                                         .builder()
-                                        .key("tmp.txt")
+                                        .key("contracts/sample-contract.csv")
                                         .build())
                                 .build())
                         .build()))
