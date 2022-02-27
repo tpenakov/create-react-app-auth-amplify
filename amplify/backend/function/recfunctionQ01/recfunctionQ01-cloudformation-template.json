@@ -15,6 +15,26 @@
     },
     "s3Key": {
       "Type": "String"
+    },
+    "storages3amplifypocBucketName": {
+      "Type": "String",
+      "Default": "storages3amplifypocBucketName"
+    },
+    "storagezlMvpDataTableName": {
+      "Type": "String",
+      "Default": "storagezlMvpDataTableName"
+    },
+    "storagezlMvpDataTableArn": {
+      "Type": "String",
+      "Default": "storagezlMvpDataTableArn"
+    },
+    "storagezlMvpDataTableStreamArn": {
+      "Type": "String",
+      "Default": "storagezlMvpDataTableStreamArn"
+    },
+    "apicreatereactappauthamGraphQLAPIIdOutput": {
+      "Type": "String",
+      "Default": "apicreatereactappauthamGraphQLAPIIdOutput"
     }
   },
   "Conditions": {
@@ -69,6 +89,47 @@
             },
             "REGION": {
               "Ref": "AWS::Region"
+            },
+            "STORAGE_S3AMPLIFYPOC_BUCKETNAME": {
+              "Ref": "storages3amplifypocBucketName"
+            },
+            "STORAGE_ZLMVPDATATABLE_NAME": {
+              "Ref": "storagezlMvpDataTableName"
+            },
+            "STORAGE_ZLMVPDATATABLE_ARN": {
+              "Ref": "storagezlMvpDataTableArn"
+            },
+            "STORAGE_ZLMVPDATATABLE_STREAMARN": {
+              "Ref": "storagezlMvpDataTableStreamArn"
+            },
+            "API_CREATEREACTAPPAUTHAM_TODOTABLE_NAME": {
+              "Fn::ImportValue": {
+                "Fn::Sub": "${apicreatereactappauthamGraphQLAPIIdOutput}:GetAtt:TodoTable:Name"
+              }
+            },
+            "API_CREATEREACTAPPAUTHAM_TODOTABLE_ARN": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:aws:dynamodb:",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ":table/",
+                  {
+                    "Fn::ImportValue": {
+                      "Fn::Sub": "${apicreatereactappauthamGraphQLAPIIdOutput}:GetAtt:TodoTable:Name"
+                    }
+                  }
+                ]
+              ]
+            },
+            "API_CREATEREACTAPPAUTHAM_GRAPHQLAPIIDOUTPUT": {
+              "Ref": "apicreatereactappauthamGraphQLAPIIdOutput"
             }
           }
         },
@@ -191,6 +252,159 @@
         ]
       },
       "DependsOn": "LambdaExecutionRole"
+    },
+    "AmplifyResourcesPolicy": {
+      "DependsOn": [
+        "LambdaExecutionRole"
+      ],
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "amplify-lambda-execution-policy",
+        "Roles": [
+          {
+            "Ref": "LambdaExecutionRole"
+          }
+        ],
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": "s3:ListBucket",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Ref": "storages3amplifypocBucketName"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:DeleteObject"
+              ],
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Ref": "storages3amplifypocBucketName"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "dynamodb:Put*",
+                "dynamodb:Create*",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:Get*",
+                "dynamodb:BatchGetItem",
+                "dynamodb:List*",
+                "dynamodb:Describe*",
+                "dynamodb:Scan",
+                "dynamodb:Query",
+                "dynamodb:Update*",
+                "dynamodb:RestoreTable*",
+                "dynamodb:Delete*"
+              ],
+              "Resource": [
+                {
+                  "Ref": "storagezlMvpDataTableArn"
+                },
+                {
+                  "Fn::Join": [
+                    "/",
+                    [
+                      {
+                        "Ref": "storagezlMvpDataTableArn"
+                      },
+                      "index/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "dynamodb:Put*",
+                "dynamodb:Create*",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:Get*",
+                "dynamodb:BatchGetItem",
+                "dynamodb:List*",
+                "dynamodb:Describe*",
+                "dynamodb:Scan",
+                "dynamodb:Query",
+                "dynamodb:Update*",
+                "dynamodb:RestoreTable*",
+                "dynamodb:Delete*"
+              ],
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:dynamodb:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":table/",
+                      {
+                        "Fn::ImportValue": {
+                          "Fn::Sub": "${apicreatereactappauthamGraphQLAPIIdOutput}:GetAtt:TodoTable:Name"
+                        }
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:dynamodb:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":table/",
+                      {
+                        "Fn::ImportValue": {
+                          "Fn::Sub": "${apicreatereactappauthamGraphQLAPIIdOutput}:GetAtt:TodoTable:Name"
+                        }
+                      },
+                      "/index/*"
+                    ]
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
     }
   },
   "Outputs": {
