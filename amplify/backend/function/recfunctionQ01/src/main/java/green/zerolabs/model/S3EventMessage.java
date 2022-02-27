@@ -16,6 +16,7 @@ import java.util.List;
 @Jacksonized
 public class S3EventMessage implements Serializable {
 
+  private static final long serialVersionUID = -5000860776966545772L;
   public static final String RECORDS = "Records";
 
   @JsonProperty(RECORDS)

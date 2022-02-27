@@ -4,8 +4,10 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import green.zerolabs.model.S3EventMessage;
 import green.zerolabs.service.S3EventService;
+import green.zerolabs.service.ZlContractService;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
+import io.smallrye.mutiny.tuples.Tuple2;
 import io.smallrye.mutiny.unchecked.Unchecked;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -33,11 +35,16 @@ public class S3EventServiceImpl implements S3EventService {
                   .readValue(getObjectMapper().writeValueAsString(map), S3EventMessage.class));
 
   private final ObjectMapper objectMapper;
-  final S3AsyncClient s3AsyncClient;
+  private final S3AsyncClient s3AsyncClient;
+  private final ZlContractService zlContractService;
 
-  public S3EventServiceImpl(final ObjectMapper objectMapper, final S3AsyncClient s3AsyncClient) {
+  public S3EventServiceImpl(
+      final ObjectMapper objectMapper,
+      final S3AsyncClient s3AsyncClient,
+      final ZlContractService zlContractService) {
     this.objectMapper = objectMapper;
     this.s3AsyncClient = s3AsyncClient;
+    this.zlContractService = zlContractService;
   }
 
   @Override
@@ -67,13 +74,26 @@ public class S3EventServiceImpl implements S3EventService {
                                         .key(record.getS3().getObject().getKey()),
                                 AsyncResponseTransformer.toBytes()))
                     .map(bytes -> bytes.asUtf8String())
+                    .onItem()
+                    .invoke(o -> log.info("{} file: {}", context.getAwsRequestId(), o))
+                    .map(s -> Tuple2.of(record, s))
                     .convert()
                     .toPublisher())
-        .onItem()
-        .invoke(o -> log.info("{} file: {}", context.getAwsRequestId(), o))
+        .flatMap(
+            objects ->
+                (getZlContractService().isSupported(objects.getItem1(), objects.getItem2(), context)
+                        ? getZlContractService()
+                            .handle(objects.getItem1(), objects.getItem2(), context)
+                        : Uni.createFrom().item(true))
+                    .convert()
+                    .toPublisher())
         .collect()
         .asList()
-        .replaceWith(true)
+        .map(
+            booleans ->
+                booleans.stream()
+                    .reduce((aBoolean, aBoolean2) -> aBoolean && aBoolean2)
+                    .orElse(true))
         .onFailure()
         .recoverWithItem(false);
   }
