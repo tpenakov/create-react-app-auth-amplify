@@ -35,6 +35,16 @@ export type AmplifyDependentResourcesAttributes = {
         "s3amplifypoc": {
             "BucketName": "string",
             "Region": "string"
+        },
+        "zlMvpDataTable": {
+            "Name": "string",
+            "Arn": "string",
+            "StreamArn": "string",
+            "PartitionKeyName": "string",
+            "PartitionKeyType": "string",
+            "SortKeyName": "string",
+            "SortKeyType": "string",
+            "Region": "string"
         }
     }
 }

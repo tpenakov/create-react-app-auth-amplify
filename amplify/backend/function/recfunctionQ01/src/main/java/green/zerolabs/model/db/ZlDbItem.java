@@ -14,6 +14,12 @@ import java.io.Serializable;
 @Jacksonized
 public class ZlDbItem implements Serializable {
   private static final long serialVersionUID = -5436379863867419767L;
+
+  public static final String ID = "id";
+  public static final String SORT = "sort";
+  public static final String GSI_SORT = "gsiSort";
+  public static final String DATA = "data";
+
   // DynamoDb partition key
   private String id;
   // DynamoDb partition sort key and GSI key

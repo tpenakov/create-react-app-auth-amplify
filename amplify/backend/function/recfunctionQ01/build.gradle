@@ -23,8 +23,10 @@ dependencies {
     implementation 'io.quarkus:quarkus-amazon-lambda'
     implementation 'io.quarkus:quarkus-arc'
     implementation 'io.quarkiverse.amazonservices:quarkus-amazon-s3'
+    implementation 'io.quarkiverse.amazonservices:quarkus-amazon-dynamodb'
     implementation 'io.quarkus:quarkus-mutiny'
     implementation 'software.amazon.awssdk:netty-nio-client'
+    implementation("com.github.bijukunjummen:aws-sdk2-dynamo-json-helper:0.13.0")
     implementation 'org.projectlombok:lombok:1.18.22'
     annotationProcessor 'org.projectlombok:lombok:1.18.22'
 

@@ -1,18 +1,26 @@
 package green.zerolabs.service.impl;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.fasterxml.jackson.databind.JsonNode;
 import green.zerolabs.model.S3EventMessage;
 import green.zerolabs.model.ZlContract;
 import green.zerolabs.model.db.ZlDbItem;
 import green.zerolabs.service.ZlContractService;
 import green.zerolabs.utils.JsonUtils;
+import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
+import io.smallrye.mutiny.unchecked.Unchecked;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.bk.aws.dynamo.util.JsonAttributeValueUtil;
+import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,10 +37,23 @@ public class ZlContractServiceImpl implements ZlContractService {
   public static final String CONTRACT_VERSION = CONTRACT_PREFIX + "version";
   public static final String CONTRACT_STATUS = CONTRACT_PREFIX + "status";
   public static final String CURRENT_CONTRACT_VERSION = "0001";
-  private final JsonUtils jsonUtils;
+  // todo - add table name - configurable
+  public static final String TABLE_NAME = "zlMvpDataTable-dev";
 
-  public ZlContractServiceImpl(final JsonUtils jsonUtils) {
+  private final JsonUtils jsonUtils;
+  private final DynamoDbAsyncClient dynamoDB;
+  private final Function<Object, JsonNode> objectToJsonNode;
+
+  public ZlContractServiceImpl(final JsonUtils jsonUtils, final DynamoDbAsyncClient dynamoDB) {
     this.jsonUtils = jsonUtils;
+    this.dynamoDB = dynamoDB;
+    objectToJsonNode =
+        Unchecked.<Object, JsonNode>function(
+            zlDbItem ->
+                getJsonUtils()
+                    .getObjectMapper()
+                    .readTree(getJsonUtils().toStringLazy(zlDbItem).toString()));
+    ;
   }
 
   @Override
@@ -53,6 +74,43 @@ public class ZlContractServiceImpl implements ZlContractService {
         .item(toDbContracts(input, data))
         .onItem()
         .invoke(items -> log.info("contracts: {}", getJsonUtils().toStringLazy(items)))
+        .map(
+            items ->
+                items.stream()
+                    .map(
+                        item -> {
+                          final Map<String, AttributeValue> map = new HashMap<>();
+                          map.put(ZlDbItem.ID, AttributeValue.builder().s(item.getId()).build());
+                          map.put(
+                              ZlDbItem.SORT, AttributeValue.builder().s(item.getSort()).build());
+                          Optional.ofNullable(item.getGsiSort())
+                              .ifPresent(
+                                  s ->
+                                      map.put(
+                                          ZlDbItem.GSI_SORT,
+                                          AttributeValue.builder().s(s).build()));
+                          Optional.ofNullable(item.getData())
+                              .ifPresent(
+                                  o ->
+                                      map.put(
+                                          ZlDbItem.DATA,
+                                          JsonAttributeValueUtil.toAttributeValue(
+                                              getObjectToJsonNode().apply(item.getData()))));
+                          return PutItemRequest.builder().tableName(TABLE_NAME).item(map).build();
+                        })
+                    .collect(Collectors.toList()))
+        .onItem()
+        .transformToMulti(putItemRequests -> Multi.createFrom().iterable(putItemRequests))
+        .flatMap(
+            putItemRequest ->
+                Uni.createFrom()
+                    .completionStage(() -> getDynamoDB().putItem(putItemRequest))
+                    .convert()
+                    .toPublisher())
+        .map(putItemResponse -> putItemResponse.attributes())
+        .map(o -> o != null)
+        .collect()
+        .asList()
         .replaceWith(true);
   }
 
